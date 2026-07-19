@@ -1,175 +1,629 @@
 # Ready for Breakout Pro
 
-A single-file, professional dark-theme stock screening and sandbox trading dashboard designed to identify and monitor institutional-quality breakout candidates across the **Indian** and **US** equity markets.
+**Ready for Breakout Pro** is a single-file `index.html` web application for screening potential stock breakout candidates and tracking shortlisted positions in a cloud-synced Sandbox Trading portfolio.
 
-The application is delivered as a standalone `index.html` file and includes:
+The application is designed as a professional, dark-theme stock screener inspired by institutional technical analysis workflows, breakout investing principles, and trend-following methodologies such as CAN SLIM, Minervini-style trend templates, VCP, Darvas Box, Wyckoff accumulation concepts, Pocket Pivot behavior, and relative strength analysis.
 
-- 🇮🇳 India breakout screener for NSE/BSE-style candidates
-- 🇺🇸 USA breakout screener for NYSE/NASDAQ-style candidates
-- 📊 Separate Sandbox Trading workspaces for India and USA
-- 🚀 Proprietary "Ready for Breakout" scoring engine
-- TradingView ticker links through mini chart buttons
-- Watchlist/favorite support
-- Paper-trading portfolio monitoring
-- CSV and Excel export
-- Responsive professional dashboard UI
+The current version integrates **Supabase Auth** and **Supabase Database** for real login, email verification, password reset, cloud favorites, and cloud Sandbox Trading sync.
 
 ---
 
-## Important Disclaimer
+## Table of Contents
 
-This dashboard is a **front-end prototype and educational stock screening tool**. It does **not** provide financial advice, investment recommendations, or guaranteed trading signals.
-
-The current version uses local sample data and deterministic scoring logic. For live trading or investment use, connect a reliable market-data provider, validate all calculations, backtest the strategy, and consult a qualified financial professional.
+1. [Project Overview](#project-overview)
+2. [Live App](#live-app)
+3. [Main Features](#main-features)
+4. [Technology Stack](#technology-stack)
+5. [File Structure](#file-structure)
+6. [Supabase Integration](#supabase-integration)
+7. [Database Tables](#database-tables)
+8. [Row Level Security Policies](#row-level-security-policies)
+9. [Authentication Flow](#authentication-flow)
+10. [Password Reset Flow](#password-reset-flow)
+11. [Sandbox Trading Cloud Sync](#sandbox-trading-cloud-sync)
+12. [India and USA Sandbox Separation](#india-and-usa-sandbox-separation)
+13. [TradingView Integration](#tradingview-integration)
+14. [Breakout Scoring Engine](#breakout-scoring-engine)
+15. [User Actions](#user-actions)
+16. [Export and Backup](#export-and-backup)
+17. [Deployment to GitHub Pages](#deployment-to-github-pages)
+18. [Testing Checklist](#testing-checklist)
+19. [Known Limitations](#known-limitations)
+20. [Future Enhancement Roadmap](#future-enhancement-roadmap)
+21. [Security Notes](#security-notes)
+22. [Troubleshooting](#troubleshooting)
+23. [Disclaimer](#disclaimer)
 
 ---
 
-## Files
+## Project Overview
+
+Ready for Breakout Pro is built as a **single standalone HTML file**:
 
 ```text
-index.html   # Main application file
-README.md    # Project documentation
+index.html
 ```
 
-The application is intentionally built as a single HTML file with embedded CSS and JavaScript, as requested.
+The file contains:
+
+- HTML layout
+- CSS styling
+- JavaScript application logic
+- Supabase authentication integration
+- Supabase database sync logic
+- Screener data model
+- Breakout scoring logic
+- Sandbox portfolio logic
+- Export logic
+
+The project does not require a local build system, Node.js, React, Vite, Webpack, or backend server.
+
+It can be hosted directly on:
+
+- GitHub Pages
+- Netlify
+- Vercel static hosting
+- Cloudflare Pages
+- Any static web hosting platform
 
 ---
 
-## Core Features
+## Live App
 
-### 1. India Screener
+Current expected GitHub Pages URL:
 
-The India tab screens NSE/BSE-style candidates using a weighted breakout scoring model.
+```text
+https://lsethu85-lab.github.io/BreakoutPro/
+```
 
-Included features:
+If the GitHub username or repository name changes, update the Supabase redirect URL accordingly.
 
-- Scan India button
-- Refresh Technicals button
-- Search and advanced filters
-- Sortable screener table
-- TradingView mini chart link per ticker
-- Add to India Sandbox
-- Favorite/watchlist button
-- Individual ticker refresh button
+---
 
-Example TradingView format:
+## Main Features
+
+### Authentication
+
+- Supabase email login
+- Supabase account registration
+- Email verification
+- Password reset email
+- New password update flow
+- Session restore after refresh
+- Logout
+
+### Screeners
+
+- India screener for NSE-style tickers
+- USA screener for NASDAQ/NYSE-style tickers
+- Search filter
+- Minimum score filter
+- Signal filter
+- Sector filter
+- Sortable table columns
+- Scan button
+- Refresh technicals button
+
+### Breakout Engine
+
+The app calculates a weighted breakout score using:
+
+- Trend score
+- Momentum score
+- Volume score
+- Pattern score
+- Smart money score
+- Relative strength score
+
+### Sandbox Trading
+
+- Add stocks to Sandbox
+- Separate India Sandbox
+- Separate USA Sandbox
+- Edit entry price
+- Edit quantity
+- Sell partial
+- Sell all
+- Delete position
+- Monitor positions
+- Calculate unrealized profit/loss
+- Calculate realized profit/loss
+- Calculate total return
+- Track highest gain
+- Track lowest drawdown
+- Display recommended action
+
+### Cloud Sync
+
+Cloud sync is handled through Supabase tables:
+
+- `sandbox_positions`
+- `favorites`
+
+Each user sees only their own data through Row Level Security.
+
+### Other Features
+
+- TradingView chart links
+- Favorite/watchlist sync
+- CSV export
+- Excel-compatible export
+- JSON backup export
+- JSON backup import
+- Responsive design
+- Professional dark theme
+
+---
+
+## Technology Stack
+
+```text
+Frontend:       HTML, CSS, JavaScript
+Auth:           Supabase Auth
+Database:       Supabase PostgreSQL
+Cloud Sync:     Supabase JavaScript SDK
+Hosting:        GitHub Pages
+Charts:         TradingView redirect links
+Storage:        Supabase cloud database
+Backup:         JSON export/import
+```
+
+The app uses the Supabase JavaScript SDK from CDN:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+```
+
+---
+
+## File Structure
+
+Current project structure:
+
+```text
+BreakoutPro/
+  index.html
+  README.md
+```
+
+The entire application is inside `index.html`.
+
+Recommended future structure if the app grows:
+
+```text
+BreakoutPro/
+  index.html
+  README.md
+  docs/
+    database-schema.sql
+    supabase-setup.md
+  assets/
+    screenshots/
+```
+
+If the application is later converted into a larger framework project:
+
+```text
+BreakoutPro/
+  public/
+    index.html
+  src/
+    components/
+    engines/
+    services/
+    styles/
+  README.md
+```
+
+---
+
+## Supabase Integration
+
+The following Supabase project is configured in `index.html`:
+
+```javascript
+const SUPABASE_URL = "https://ezqhoxwvlgxvbkcrsjrk.supabase.co";
+```
+
+The app also includes the Supabase anon public key:
+
+```javascript
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+```
+
+The anon key is allowed in frontend code only when Row Level Security is properly configured.
+
+Never place the Supabase `service_role` key inside `index.html`.
+
+---
+
+## Database Tables
+
+The application depends on two Supabase tables.
+
+### `sandbox_positions`
+
+Stores Sandbox Trading positions.
+
+Main fields:
+
+```text
+id
+user_id
+market
+ticker
+company
+exchange
+entry_price
+current_price
+quantity
+stop_loss
+target_1
+target_2
+breakout_score
+technical_score
+buy_signal
+current_signal
+realized_profit
+highest_price
+lowest_price
+buy_date
+created_at
+updated_at
+```
+
+### `favorites`
+
+Stores favorite/watchlist tickers.
+
+Main fields:
+
+```text
+id
+user_id
+ticker
+market
+created_at
+```
+
+---
+
+## SQL Setup
+
+Use the following SQL in Supabase SQL Editor.
+
+### Create Tables
+
+```sql
+create table if not exists sandbox_positions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+
+  market text not null,
+  ticker text not null,
+  company text,
+  exchange text,
+
+  entry_price numeric,
+  current_price numeric,
+  quantity numeric,
+
+  stop_loss numeric,
+  target_1 numeric,
+  target_2 numeric,
+
+  breakout_score numeric,
+  technical_score numeric,
+
+  buy_signal text,
+  current_signal text,
+
+  realized_profit numeric default 0,
+  highest_price numeric,
+  lowest_price numeric,
+
+  buy_date date default current_date,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists favorites (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  ticker text not null,
+  market text not null,
+  created_at timestamptz default now(),
+
+  unique(user_id, ticker)
+);
+```
+
+---
+
+## Row Level Security Policies
+
+Row Level Security ensures every authenticated user can only read and modify their own rows.
+
+### Enable RLS
+
+```sql
+alter table sandbox_positions enable row level security;
+alter table favorites enable row level security;
+```
+
+### Sandbox Policies
+
+```sql
+create policy "Users can read own sandbox positions"
+on sandbox_positions
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own sandbox positions"
+on sandbox_positions
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can update own sandbox positions"
+on sandbox_positions
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own sandbox positions"
+on sandbox_positions
+for delete
+using (auth.uid() = user_id);
+```
+
+### Favorites Policies
+
+```sql
+create policy "Users can read own favorites"
+on favorites
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can insert own favorites"
+on favorites
+for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own favorites"
+on favorites
+for delete
+using (auth.uid() = user_id);
+```
+
+### Verify Policies
+
+```sql
+select
+  tablename,
+  policyname,
+  cmd
+from pg_policies
+where schemaname = 'public'
+order by tablename, policyname;
+```
+
+Expected tables:
+
+```text
+favorites
+sandbox_positions
+```
+
+---
+
+## Authentication Flow
+
+### Login
+
+The login page uses:
+
+```text
+Email
+Password
+```
+
+When the user logs in, the app:
+
+1. Calls Supabase Auth.
+2. Receives the logged-in user session.
+3. Stores the user ID in app state.
+4. Loads cloud Sandbox positions from Supabase.
+5. Loads cloud favorites from Supabase.
+6. Opens the dashboard.
+
+Relevant function:
+
+```javascript
+loginWithSupabase(email, password)
+```
+
+### Registration
+
+The registration page uses:
+
+```text
+Email
+Password
+```
+
+When the user creates an account, Supabase sends a verification email.
+
+Relevant function:
+
+```javascript
+registerWithSupabase(email, password)
+```
+
+### Email Verification
+
+After registration:
+
+1. The user receives a Supabase verification email.
+2. The user clicks the verification link.
+3. Supabase redirects the user back to the GitHub Pages app.
+4. The user can then log in.
+
+Supabase redirect URL must be configured correctly.
+
+---
+
+## Password Reset Flow
+
+The password reset flow has two screens.
+
+### Step 1: Request Reset Email
+
+The reset request screen shows:
+
+```text
+Email only
+Send Reset Email
+```
+
+Relevant function:
+
+```javascript
+resetPasswordSupabase(email)
+```
+
+Expected behavior:
+
+1. User clicks **Forgot password?**
+2. User enters email.
+3. User clicks **Send Reset Email**.
+4. Supabase sends a password reset email.
+
+### Step 2: Set New Password
+
+After clicking the reset email link, Supabase redirects back to the app.
+
+The app listens for:
+
+```javascript
+PASSWORD_RECOVERY
+```
+
+Then the screen changes to:
+
+```text
+New Password
+Update Password
+```
+
+Relevant function:
+
+```javascript
+updatePasswordSupabase(newPassword)
+```
+
+Expected behavior:
+
+1. User enters new password.
+2. User clicks **Update Password**.
+3. Password is updated in Supabase.
+4. User logs in again with the new password.
+
+---
+
+## Supabase Redirect Configuration
+
+In Supabase dashboard:
+
+```text
+Authentication → URL Configuration
+```
+
+Set **Site URL**:
+
+```text
+https://lsethu85-lab.github.io/BreakoutPro/
+```
+
+Add **Redirect URL**:
+
+```text
+https://lsethu85-lab.github.io/BreakoutPro/
+```
+
+If testing locally, add:
+
+```text
+http://localhost:5500
+http://127.0.0.1:5500
+```
+
+---
+
+## Sandbox Trading Cloud Sync
+
+Sandbox data is saved to Supabase whenever the user performs one of these actions:
+
+- Add to Sandbox
+- Edit entry price
+- Edit quantity
+- Sell partial
+- Sell all
+- Delete position
+- Monitor Sandbox
+- Clear current market Sandbox
+- Clear all Sandbox positions
+- Import backup
+
+Local browser storage is no longer the primary source of truth. Supabase is the cloud source of truth.
+
+---
+
+## India and USA Sandbox Separation
+
+Sandbox Trading is split into two independent views:
+
+```text
+India Sandbox
+USA Sandbox
+```
+
+### India Sandbox
+
+Stores positions where:
+
+```text
+market = 'india'
+exchange = 'NSE'
+```
+
+### USA Sandbox
+
+Stores positions where:
+
+```text
+market = 'usa'
+exchange = 'NASDAQ' or 'NYSE'
+```
+
+The user can monitor, export, and clear each market independently.
+
+---
+
+## TradingView Integration
+
+Every screener row and Sandbox row includes a mini chart link.
+
+The link opens TradingView using the ticker symbol.
+
+Examples:
 
 ```text
 NSE:RELIANCE
-NSE:TATAMOTORS
-NSE:HDFCBANK
-```
-
----
-
-### 2. USA Screener
-
-The USA tab screens NYSE/NASDAQ-style candidates using the same institutional breakout engine.
-
-Included features:
-
-- Scan USA button
-- Refresh Technicals button
-- Search and advanced filters
-- Sortable screener table
-- TradingView mini chart link per ticker
-- Add to USA Sandbox
-- Favorite/watchlist button
-- Individual ticker refresh button
-
-Example TradingView format:
-
-```text
 NASDAQ:NVDA
 NYSE:PLTR
-NASDAQ:MSFT
 ```
 
----
-
-### 3. Ready for Breakout Engine
-
-The application includes a configurable weighted scoring model inspired by leading breakout and trend-following methodologies, including:
-
-- CAN SLIM-style leadership and momentum concepts
-- Minervini-style trend template logic
-- Volatility Contraction Pattern concepts
-- Darvas Box breakout logic
-- Weinstein stage-analysis principles
-- Wyckoff accumulation concepts
-- Pocket Pivot-style volume behavior
-- Relative strength ranking
-- Smart money accumulation estimation
-
-Default scoring weights:
-
-```javascript
-Trend:             20%
-Pattern:           20%
-Momentum:          15%
-Volume:            15%
-Smart Money:       15%
-Relative Strength: 15%
-```
-
-Breakout tiers:
-
-```text
-95-100  = Elite Breakout Candidate
-90-94   = High Probability
-80-89   = Watchlist
-70-79   = Early Setup
-Below 70 = Ignore
-```
-
----
-
-## Screener Table Columns
-
-The screener table includes institutional-style columns such as:
-
-- Chart
-- Company
-- Ticker
-- Exchange
-- Sector
-- Industry
-- Current Price
-- Breakout Score
-- Buy Score
-- Technical Score
-- Volume Score
-- Momentum Score
-- Trend Score
-- Relative Strength
-- Smart Money Score
-- Pattern Name
-- Confidence %
-- Buy / Wait / Avoid Signal
-- Suggested Entry Price
-- Stop Loss
-- Target 1
-- Target 2
-- Risk Reward Ratio
-- Days in Base
-- RSI
-- MACD
-- SuperTrend
-- EMA Alignment
-- ATR
-- Volume Ratio
-- Market Cap
-- Actions
-
----
-
-## TradingView Mini Chart Links
-
-Each stock row includes a compact chart-style button.
-
-Clicking the button opens TradingView in a new browser tab using the ticker symbol.
-
-Example generated URL:
+Generated URL format:
 
 ```text
 https://www.tradingview.com/chart/?symbol=NSE%3ARELIANCE
@@ -177,244 +631,9 @@ https://www.tradingview.com/chart/?symbol=NSE%3ARELIANCE
 
 ---
 
-## Sandbox Trading
+## Breakout Scoring Engine
 
-The Sandbox Trading tab is split into two independent workspaces:
-
-### India Sandbox
-
-Tracks only India/NSE-style positions.
-
-### USA Sandbox
-
-Tracks only USA/NYSE/NASDAQ-style positions.
-
-When a stock is added from the India screener, it is automatically assigned to the India Sandbox. When a stock is added from the USA screener, it is automatically assigned to the USA Sandbox.
-
-Each Sandbox workspace has its own:
-
-- Total investment
-- Current portfolio value
-- Unrealized profit/loss
-- Realized profit/loss
-- Total return %
-- Win rate
-- Best performer
-- Worst performer
-- Active trades
-- Market-specific monitoring button
-- Market-specific CSV export
-- Market-specific Excel export
-- Clear current market button
-
----
-
-## Sandbox Position Fields
-
-Each sandbox position includes:
-
-- Company
-- Ticker
-- Buy Date
-- Entry Price
-- Current Price
-- Editable Quantity
-- Investment Amount
-- Current Value
-- Unrealized Profit/Loss
-- Realized Profit/Loss
-- Total Return %
-- Holding Days
-- Highest Gain
-- Lowest Drawdown
-- Buy Signal
-- Current Signal
-- Recommended Action
-- Stop Loss
-- Target 1
-- Target 2
-- Breakout Score
-- Technical Score
-- Chart Button
-- Position Actions
-
----
-
-## Sandbox Actions
-
-Supported actions include:
-
-- Edit quantity
-- Edit entry price
-- Sell partial
-- Sell all
-- Delete position
-- Monitor current market
-- Export current market to CSV
-- Export current market to Excel
-- Clear current market
-- Clear all Sandbox positions
-
----
-
-## Automatic Monitoring Signals
-
-The Sandbox monitoring engine generates action labels such as:
-
-```text
-🟢 Buy
-🟡 Hold
-🔵 Add on Pullback
-🟠 Take Partial Profit
-🟣 Target 2 Achieved
-🔴 Stop Loss Hit
-```
-
-The current implementation simulates price updates locally. For production use, replace this behavior with live price updates from a market-data API.
-
----
-
-## Local Persistence
-
-The application stores watchlist and Sandbox data in browser `localStorage`.
-
-Stored items include:
-
-```text
-rbp_favorites
-rbp_sandbox
-```
-
-This means positions and favorites remain available after refreshing the browser, as long as browser storage is not cleared.
-
----
-
-## How to Run
-
-No server is required.
-
-1. Download or copy `index.html`.
-2. Open it directly in a modern browser.
-3. Use the India or USA screener.
-4. Click `⭐ Add` to add candidates to Sandbox Trading.
-5. Open the Sandbox tab and switch between India Sandbox and USA Sandbox.
-
-Recommended browsers:
-
-- Microsoft Edge
-- Google Chrome
-- Brave
-- Firefox
-
----
-
-## Current Limitations
-
-The current version is a polished single-file prototype and uses sample data.
-
-It does not yet include:
-
-- Live NSE/BSE market data
-- Live NYSE/NASDAQ market data
-- Real historical OHLCV candles
-- Real-time indicator recalculation from candle data
-- Backend database
-- Authentication
-- Cloud sync
-- Broker integration
-- Automated order placement
-- Full backtesting engine
-- News, earnings, or fundamental analysis
-
----
-
-## Recommended Production Extensions
-
-Future enhancements can be added without redesigning the UI architecture.
-
-Suggested modules:
-
-```text
-MarketDataEngine
-TechnicalAnalysisEngine
-PatternRecognitionEngine
-InstitutionalScoringEngine
-RelativeStrengthEngine
-ReadyForBreakoutEngine
-PortfolioSandbox
-WatchlistManager
-TradingViewIntegration
-ExportEngine
-AlertEngine
-BacktestingEngine
-FundamentalAnalysisEngine
-NewsAndEarningsEngine
-AIRankingEngine
-```
-
----
-
-## Suggested Live Data Integrations
-
-For a production system, connect one or more market-data providers.
-
-Possible integrations:
-
-- NSE/BSE data vendor
-- Yahoo Finance-compatible API
-- Alpha Vantage
-- Twelve Data
-- Polygon.io
-- Finnhub
-- IEX Cloud
-- Interactive Brokers API
-- Zerodha Kite Connect
-- TradingView-compatible symbol mapping
-
-Make sure to review each provider's terms of service, data limits, licensing restrictions, and exchange requirements.
-
----
-
-## Technical Architecture
-
-The single-file application is organized conceptually into these layers:
-
-```text
-UI Layer
-  - Dashboard rendering
-  - Screener table
-  - Sandbox table
-  - Filters and sorting
-  - Toast notifications
-
-Business Logic Layer
-  - Scan actions
-  - Refresh actions
-  - Watchlist management
-  - Export handling
-
-Technical Engine Layer
-  - Weighted breakout scoring
-  - Pattern scoring
-  - Entry/stop/target calculation
-  - Relative strength display
-
-Sandbox Layer
-  - Position tracking
-  - P/L calculation
-  - Market-specific portfolio metrics
-  - Monitoring alert logic
-
-Persistence Layer
-  - localStorage favorites
-  - localStorage sandbox positions
-```
-
----
-
-## Customizing Scoring Weights
-
-Inside `index.html`, locate the `Config` object:
+The app uses a weighted scoring model:
 
 ```javascript
 const Config = {
@@ -434,132 +653,479 @@ const Config = {
 };
 ```
 
-You can adjust the weights to match your preferred trading methodology.
-
-For example, to prioritize relative strength and trend:
-
-```javascript
-weights: {
-  trend: .25,
-  momentum: .15,
-  volume: .10,
-  pattern: .15,
-  smartMoney: .15,
-  rs: .20
-}
-```
-
-Make sure the total weight equals `1.00`.
-
----
-
-## Customizing Sample Stocks
-
-The sample India and USA stock lists are defined in JavaScript arrays:
-
-```javascript
-const India = [ ... ];
-const USA = [ ... ];
-```
-
-Each stock object contains fields such as:
-
-```javascript
-{
-  company: 'Reliance Industries',
-  ticker: 'NSE:RELIANCE',
-  exchange: 'NSE',
-  sector: 'Energy',
-  industry: 'Integrated Oil & Gas',
-  price: 1509.6,
-  marketCap: '₹20.4T',
-  base: 47,
-  pattern: 'VCP',
-  trend: 94,
-  momentum: 88,
-  volume: 91,
-  smartMoney: 93,
-  rs: 87,
-  rsi: 64,
-  macd: 'Bullish',
-  supertrend: 'Bullish',
-  ema: '20>50>100>200',
-  atr: 32.4,
-  volRatio: 1.9,
-  bench: 'Nifty 50'
-}
-```
-
----
-
-## Production Development Notes
-
-For a true institutional-grade implementation, the following should be added:
-
-1. Candle-data ingestion
-2. Technical indicator calculation from OHLCV data
-3. Pattern-recognition algorithms
-4. Relative strength ranking versus benchmark indices
-5. Sector and industry leadership model
-6. Earnings and sales growth filters
-7. Market regime filter
-8. Backtesting and walk-forward validation
-9. Database-backed portfolio tracking
-10. User authentication and cloud sync
-11. Alerting via email, Telegram, WhatsApp, or push notifications
-12. Risk-management module
-13. Strategy-performance analytics
-
----
-
-## Suggested Folder Structure for Future Expansion
-
-If the project is later converted from a single HTML file into a full application, a scalable structure could look like this:
+Scoring categories:
 
 ```text
-ready-for-breakout-pro/
-  public/
-    index.html
-  src/
-    components/
-      Dashboard.jsx
-      ScreenerTable.jsx
-      SandboxPortfolio.jsx
-      MiniChartLink.jsx
-    engines/
-      MarketDataEngine.js
-      TechnicalAnalysisEngine.js
-      PatternRecognitionEngine.js
-      BreakoutScoringEngine.js
-      RelativeStrengthEngine.js
-    services/
-      ApiClient.js
-      ExportService.js
-      StorageService.js
-    styles/
-      theme.css
-  README.md
+Trend:             20%
+Pattern:           20%
+Momentum:          15%
+Volume:            15%
+Smart Money:       15%
+Relative Strength: 15%
+```
+
+Breakout score tiers:
+
+```text
+95-100  Elite Breakout Candidate
+90-94   High Probability
+80-89   Watchlist
+70-79   Early Setup
+Below 70 Ignore
 ```
 
 ---
 
-## License
+## Screener Columns
 
-This prototype is provided for educational and internal research purposes. Add your preferred license before public distribution.
+The screener table includes:
+
+```text
+Chart
+Company
+Ticker
+Exchange
+Sector
+Industry
+Current Price
+Breakout Score
+Buy Score
+Technical Score
+Volume Score
+Momentum Score
+Trend Score
+Relative Strength
+Smart Money Score
+Pattern Name
+Confidence %
+Signal
+Suggested Entry
+Stop Loss
+Target 1
+Target 2
+Risk Reward
+Days in Base
+RSI
+MACD
+SuperTrend
+EMA Alignment
+ATR
+Volume Ratio
+Market Cap
+Actions
+```
 
 ---
 
-## Version Notes
+## User Actions
 
-### Current Version
+### Screener Actions
 
-- Single-file `index.html`
-- Professional dark dashboard
-- India and USA screeners
-- Separate India and USA Sandbox workspaces
-- TradingView mini chart redirects
-- Scan and refresh controls
-- Local watchlist and Sandbox persistence
-- CSV/Excel export
-- Responsive layout
+Each stock row has:
 
+```text
+Chart link
+Add to Sandbox
+Favorite
+Refresh ticker
+```
+
+### Sandbox Actions
+
+Each Sandbox row has:
+
+```text
+Edit entry price
+Edit quantity
+Sell partial
+Sell all
+Delete position
+Open TradingView chart
+```
+
+### Portfolio Actions
+
+Available actions:
+
+```text
+Monitor current market
+Export current market CSV
+Export current market Excel
+Clear current market
+Clear all
+Export backup JSON
+Import backup JSON
+```
+
+---
+
+## Export and Backup
+
+The app supports:
+
+```text
+CSV export
+Excel-compatible export
+JSON backup export
+JSON backup import
+```
+
+### CSV Export
+
+Exports visible screener or Sandbox data to `.csv`.
+
+### Excel Export
+
+Exports HTML table content as `.xls` for Excel-compatible opening.
+
+### JSON Backup Export
+
+Creates a complete backup of:
+
+```text
+favorites
+sandbox
+sandboxMarket
+export timestamp
+user email
+```
+
+### JSON Backup Import
+
+Imports backup data and syncs positions/favorites to Supabase.
+
+---
+
+## Deployment to GitHub Pages
+
+### Step 1: Upload Files
+
+Upload these files to the root of your GitHub repository:
+
+```text
+index.html
+README.md
+```
+
+### Step 2: Enable GitHub Pages
+
+In GitHub:
+
+```text
+Repository → Settings → Pages
+```
+
+Set:
+
+```text
+Source: Deploy from branch
+Branch: main
+Folder: /root
+```
+
+### Step 3: Confirm URL
+
+Expected app URL:
+
+```text
+https://lsethu85-lab.github.io/BreakoutPro/
+```
+
+### Step 4: Hard Refresh
+
+After uploading a new `index.html`, hard refresh:
+
+```text
+Ctrl + F5
+```
+
+Or open in an incognito/private browser window.
+
+---
+
+## Testing Checklist
+
+### Authentication
+
+```text
+[ ] Create account works
+[ ] Verification email arrives
+[ ] Verification link returns to app
+[ ] Login works
+[ ] Session persists after refresh
+[ ] Logout works
+```
+
+### Password Reset
+
+```text
+[ ] Forgot password screen shows email only
+[ ] Reset email is sent
+[ ] Reset link returns to app
+[ ] Set New Password screen appears
+[ ] New password saves successfully
+[ ] Login works with new password
+```
+
+### Supabase Data
+
+```text
+[ ] Add NSE stock to India Sandbox
+[ ] Add NASDAQ/NYSE stock to USA Sandbox
+[ ] Refresh page
+[ ] Login again
+[ ] Positions reload from Supabase
+[ ] Favorite ticker saves to Supabase
+[ ] Favorite ticker reloads after login
+```
+
+### Sandbox
+
+```text
+[ ] Edit quantity
+[ ] Edit entry price
+[ ] Sell partial
+[ ] Sell all
+[ ] Delete position
+[ ] Monitor India Sandbox
+[ ] Monitor USA Sandbox
+[ ] Clear India only
+[ ] Clear USA only
+[ ] Clear all
+```
+
+### Export
+
+```text
+[ ] Export screener CSV
+[ ] Export screener Excel
+[ ] Export Sandbox CSV
+[ ] Export Sandbox Excel
+[ ] Export JSON backup
+[ ] Import JSON backup
+```
+
+---
+
+## Known Limitations
+
+The current app is a professional prototype and does not yet use live market data.
+
+Current limitations:
+
+```text
+Sample stock data only
+No live NSE/BSE feed
+No live NASDAQ/NYSE feed
+No real historical OHLCV indicator calculation
+No broker integration
+No automated trading
+No server-side backtesting
+No real notification system
+No AI ranking engine
+No fundamental analysis engine
+```
+
+The screener logic is deterministic and based on predefined sample data.
+
+---
+
+## Future Enhancement Roadmap
+
+Recommended next features:
+
+```text
+Live market data integration
+Real OHLCV technical indicator engine
+Historical candle storage
+Backtesting module
+Sector strength model
+Earnings and revenue growth filters
+News and sentiment module
+AI ranking model
+Push/email/Telegram alerts
+Admin dashboard
+User settings page
+Portfolio analytics dashboard
+Watchlist grouping
+Import custom tickers
+Broker API integration
+```
+
+Recommended future modules:
+
+```text
+MarketDataEngine
+TechnicalAnalysisEngine
+PatternRecognitionEngine
+BreakoutScoringEngine
+RelativeStrengthEngine
+InstitutionalActivityEngine
+SandboxPortfolioService
+SupabaseDataService
+AuthService
+ExportService
+AlertService
+BacktestingEngine
+```
+
+---
+
+## Security Notes
+
+### Safe to expose in frontend
+
+```text
+Supabase Project URL
+Supabase anon public key
+```
+
+Only safe when RLS is enabled and correct policies are configured.
+
+### Never expose in frontend
+
+```text
+Supabase service_role key
+Database password
+Private API keys
+Broker API secrets
+Paid data vendor secret keys
+```
+
+### Important
+
+If the `service_role` key is ever accidentally committed to GitHub, rotate the key immediately in Supabase.
+
+---
+
+## Troubleshooting
+
+### Password reset screen shows password field
+
+Use the latest `index.html`. The fixed reset screen shows only the email field during reset request.
+
+### Email verification not received
+
+Check:
+
+```text
+Spam folder
+Supabase Authentication → Providers → Email
+Correct email address
+Supabase email rate limits
+```
+
+### Reset link does not return to the app
+
+Check:
+
+```text
+Authentication → URL Configuration
+Site URL
+Redirect URLs
+```
+
+The GitHub Pages URL must match exactly.
+
+### Supabase says row violates RLS policy
+
+Check:
+
+```text
+user_id is being inserted as auth user ID
+RLS policies exist
+User is logged in
+Anon key is being used, not service_role key
+```
+
+### Sandbox does not reload after login
+
+Check:
+
+```text
+sandbox_positions table exists
+RLS select policy exists
+User is logged in
+Browser console for Supabase errors
+```
+
+### Favorites do not save
+
+Check:
+
+```text
+favorites table exists
+unique(user_id, ticker) exists
+insert/delete policies exist
+User is logged in
+```
+
+### Website still shows old version
+
+Try:
+
+```text
+Ctrl + F5
+Incognito window
+Clear browser cache
+Wait 1-2 minutes after GitHub Pages deployment
+```
+
+---
+
+## Development Notes
+
+The app is intentionally written as a single file.
+
+Main JavaScript sections:
+
+```text
+Supabase config
+Auth state
+Sample market data
+Scoring engine
+Cloud load/save functions
+Screener rendering
+Sandbox rendering
+Portfolio calculations
+Export/backup logic
+Utility functions
+App initialization
+```
+
+If the file becomes too large, the app can later be split into modules.
+
+---
+
+## Disclaimer
+
+This application is for educational, research, and paper-trading purposes only.
+
+The screener does not provide financial advice, investment recommendations, or guaranteed trading signals.
+
+All trading and investing decisions involve risk. Validate all strategies independently before using real capital.
+
+---
+
+## Version Summary
+
+Current version includes:
+
+```text
+Single-file index.html
+Professional dark dashboard
+Supabase Auth
+Email verification
+Password reset
+Supabase cloud Sandbox sync
+Supabase cloud favorites sync
+India Screener
+USA Screener
+India Sandbox
+USA Sandbox
+TradingView links
+CSV export
+Excel export
+JSON backup/import
+Responsive layout
+```
